@@ -139,7 +139,7 @@ const Dashboard = () => {
             </div>
             <h3 className="text-xl font-semibold mb-2">Medicamentos</h3>
             <p className="text-muted-foreground mb-4">
-              Adicione e gerencie medicamentos com horários e dosagens
+              Adicione e gerencie medicamentos do seu familiar
             </p>
             <Button variant="default" className="w-full">
               Gerenciar Medicamentos
@@ -167,7 +167,7 @@ const Dashboard = () => {
             <p className="text-muted-foreground mb-4">
               Faça upload e organize exames médicos
             </p>
-            <Button variant="outline" className="w-full">
+            <Button variant="orange" className="w-full">
               Adicionar Exame
             </Button>
           </Card>
@@ -206,7 +206,7 @@ const Dashboard = () => {
             <p className="text-muted-foreground mb-4">
               Adicione perfis de idosos para cuidar
             </p>
-            <Button variant="outline" className="w-full">
+            <Button variant="orange" className="w-full">
               Adicionar Idoso
             </Button>
           </Card>
