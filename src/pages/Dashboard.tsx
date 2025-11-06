@@ -133,7 +133,10 @@ const Dashboard = () => {
 
         {/* Main Actions */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card className="p-6 hover:shadow-[var(--shadow-medium)] transition-all cursor-pointer bg-[var(--gradient-card)] group">
+          <Card 
+            className="p-6 hover:shadow-[var(--shadow-medium)] transition-all cursor-pointer bg-[var(--gradient-card)] group"
+            onClick={() => navigate("/medications")}
+          >
             <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Pill className="w-8 h-8 text-primary" />
             </div>
@@ -146,7 +149,10 @@ const Dashboard = () => {
             </Button>
           </Card>
 
-          <Card className="p-6 hover:shadow-[var(--shadow-medium)] transition-all cursor-pointer bg-[var(--gradient-card)] group">
+          <Card 
+            className="p-6 hover:shadow-[var(--shadow-medium)] transition-all cursor-pointer bg-[var(--gradient-card)] group"
+            onClick={() => navigate("/appointments")}
+          >
             <div className="w-16 h-16 rounded-xl bg-secondary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Calendar className="w-8 h-8 text-secondary" />
             </div>
@@ -159,7 +165,10 @@ const Dashboard = () => {
             </Button>
           </Card>
 
-          <Card className="p-6 hover:shadow-[var(--shadow-medium)] transition-all cursor-pointer bg-[var(--gradient-card)] group">
+          <Card 
+            className="p-6 hover:shadow-[var(--shadow-medium)] transition-all cursor-pointer bg-[var(--gradient-card)] group"
+            onClick={() => navigate("/documents")}
+          >
             <div className="w-16 h-16 rounded-xl bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <FileText className="w-8 h-8 text-accent" />
             </div>
@@ -172,7 +181,10 @@ const Dashboard = () => {
             </Button>
           </Card>
 
-          <Card className="p-6 hover:shadow-[var(--shadow-medium)] transition-all cursor-pointer bg-[var(--gradient-card)] group">
+          <Card 
+            className="p-6 hover:shadow-[var(--shadow-medium)] transition-all cursor-pointer bg-[var(--gradient-card)] group"
+            onClick={() => navigate("/family")}
+          >
             <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Users className="w-8 h-8 text-primary" />
             </div>
@@ -198,7 +210,10 @@ const Dashboard = () => {
             </Button>
           </Card>
 
-          <Card className="p-6 hover:shadow-[var(--shadow-medium)] transition-all cursor-pointer bg-[var(--gradient-card)] group">
+          <Card 
+            className="p-6 hover:shadow-[var(--shadow-medium)] transition-all cursor-pointer bg-[var(--gradient-card)] group"
+            onClick={() => navigate("/family")}
+          >
             <div className="w-16 h-16 rounded-xl bg-accent/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Heart className="w-8 h-8 text-accent fill-accent" />
             </div>
