@@ -6,6 +6,7 @@ import heroImage from "@/assets/hero-family.jpg";
 import medicationIcon from "@/assets/icon-medication.png";
 import appointmentIcon from "@/assets/icon-appointment.png";
 import familyIcon from "@/assets/icon-family.png";
+import { DemoVideoDialog } from "@/components/DemoVideoDialog";
 
 const Index = () => {
   return (
@@ -60,9 +61,7 @@ const Index = () => {
                     Começar Gratuitamente
                   </Button>
                 </Link>
-                <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                  Ver Demonstração
-                </Button>
+                <DemoVideoDialog />
               </div>
             </div>
             <div className="relative">
