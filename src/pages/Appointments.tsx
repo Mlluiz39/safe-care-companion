@@ -17,6 +17,7 @@ interface Appointment {
   specialty?: string;
   location?: string;
   appointment_date: string;
+  appointment_time?: string;
   duration_minutes?: number;
   notes?: string;
   family_member_id: string;
@@ -28,6 +29,18 @@ interface Appointment {
 interface FamilyMember {
   id: string;
   full_name: string;
+}
+
+interface AppointmentFormValues {
+  family_member_id: string;
+  title: string;
+  doctor_name?: string;
+  specialty?: string;
+  location?: string;
+  appointment_date: string | Date;
+  appointment_time: string;
+  duration_minutes?: number;
+  notes?: string;
 }
 
 const Appointments = () => {
@@ -97,22 +110,27 @@ const Appointments = () => {
     setAppointments(data || []);
   };
 
-  const handleDateClick = (date: Date) => {
-    setSelectedDate(date);
-    setEditingAppointment(null);
-    setIsFormOpen(true);
-  };
-
   const handleAppointmentClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setIsDetailsOpen(true);
   };
 
-  const handleFormSubmit = async (values: any) => {
+  const handleFormSubmit = async (values: Partial<AppointmentFormValues>) => {
     setIsLoading(true);
-    
-    const appointmentDateTime = new Date(values.appointment_date);
-    const [hours, minutes] = values.appointment_time.split(":");
+
+    // Validate required fields coming from the form (family member, title, date and time)
+    if (!values.family_member_id || !values.title || !values.appointment_date || !values.appointment_time) {
+      setIsLoading(false);
+      toast({
+        title: "Dados incompletos",
+        description: "Por favor preencha todos os campos obrigatórios.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const appointmentDateTime = new Date(values.appointment_date as Date | string);
+    const [hours, minutes] = (values.appointment_time as string).split(":");
     appointmentDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
     const appointmentData = {
@@ -127,7 +145,7 @@ const Appointments = () => {
       created_by: user?.id,
     };
 
-    let error;
+    let error: { message?: string } | null = null;
     if (editingAppointment) {
       const { error: updateError } = await supabase
         .from("appointments")
@@ -168,7 +186,7 @@ const Appointments = () => {
       setEditingAppointment({
         ...selectedAppointment,
         appointment_time: appointmentDate.toTimeString().slice(0, 5),
-      } as any);
+      } as never);
       setIsDetailsOpen(false);
       setIsFormOpen(true);
     }
@@ -201,6 +219,13 @@ const Appointments = () => {
     loadAppointments();
   };
 
+  function handleDateClick(date: Date): void {
+    // open the form to create a new appointment for the clicked date
+    setSelectedDate(date);
+    setEditingAppointment(null);
+    setSelectedAppointment(null);
+    setIsFormOpen(true);
+  }
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -245,20 +270,26 @@ const Appointments = () => {
           </DialogHeader>
           <AppointmentForm
             familyMembers={familyMembers}
+            defaultValues={
+              editingAppointment
+                ? {
+                    family_member_id: editingAppointment.family_member_id,
+                    title: editingAppointment.title,
+                    doctor_name: editingAppointment.doctor_name,
+                    specialty: editingAppointment.specialty,
+                    location: editingAppointment.location,
+                    appointment_date: new Date(editingAppointment.appointment_date),
+                    appointment_time: editingAppointment.appointment_time,
+                    duration_minutes: editingAppointment.duration_minutes,
+                    notes: editingAppointment.notes,
+                  }
+                : selectedDate
+                ? {
+                    appointment_date: selectedDate,
+                  }
+                : undefined
+            }
             onSubmit={handleFormSubmit}
-            defaultValues={editingAppointment ? {
-              family_member_id: editingAppointment.family_member_id,
-              title: editingAppointment.title,
-              doctor_name: editingAppointment.doctor_name,
-              specialty: editingAppointment.specialty,
-              location: editingAppointment.location,
-              appointment_date: new Date(editingAppointment.appointment_date),
-              appointment_time: (editingAppointment as any).appointment_time,
-              duration_minutes: editingAppointment.duration_minutes,
-              notes: editingAppointment.notes,
-            } : selectedDate ? {
-              appointment_date: selectedDate,
-            } : undefined}
             isLoading={isLoading}
           />
         </DialogContent>

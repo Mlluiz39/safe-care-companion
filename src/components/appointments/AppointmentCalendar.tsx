@@ -43,7 +43,7 @@ export const AppointmentCalendar = ({ appointments, onDateClick, onAppointmentCl
   const goToToday = () => setCurrentMonth(new Date());
 
   return (
-    <Card className="p-6 bg-[var(--gradient-card)]">
+    <Card className="p-1 bg-[var(--gradient-card)]">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export const AppointmentCalendar = ({ appointments, onDateClick, onAppointmentCl
       </div>
 
       {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7">
         {calendarDays.map(day => {
           const dayAppointments = getAppointmentsForDay(day);
           const isCurrentMonth = isSameMonth(day, currentMonth);
@@ -86,7 +86,7 @@ export const AppointmentCalendar = ({ appointments, onDateClick, onAppointmentCl
               key={day.toISOString()}
               onClick={() => onDateClick(day)}
               className={cn(
-                "min-h-[100px] p-2 border rounded-lg cursor-pointer transition-all hover:shadow-[var(--shadow-medium)] hover:border-primary/50",
+                "min-h-[100px] p-2 border cursor-pointer transition-all hover:shadow-[var(--shadow-medium)] hover:border-primary/50",
                 !isCurrentMonth && "opacity-40",
                 isToday && "border-primary border-2 bg-primary/5"
               )}
