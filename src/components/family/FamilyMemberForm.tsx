@@ -2,17 +2,18 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
-import { CalendarIcon, Plus, X } from "lucide-react";
+import { ptBR } from "date-fns/locale";
+import { CalendarIcon, Plus, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { DayPicker } from "react-day-picker";
 
 const formSchema = z.object({
   full_name: z.string().min(1, "Nome é obrigatório"),
@@ -36,6 +37,8 @@ interface FamilyMemberFormProps {
 export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyMemberFormProps) => {
   const [newAllergy, setNewAllergy] = useState("");
   const [newCondition, setNewCondition] = useState("");
+  const [calendarMonth, setCalendarMonth] = useState<Date>(defaultValues?.date_of_birth || new Date());
+  const [viewMode, setViewMode] = useState<'day' | 'month' | 'year'>('day');
   
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -121,17 +124,162 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) => date > new Date()}
-                      initialFocus
-                      className="pointer-events-auto"
-                      captionLayout="dropdown-buttons"
-                      fromYear={1900}
-                      toYear={new Date().getFullYear()}
-                    />
+                    <div className="p-3 pointer-events-auto">
+                      {/* Header com navegação */}
+                      <div className="flex items-center justify-between mb-3">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => {
+                            if (viewMode === 'day') {
+                              const newMonth = new Date(calendarMonth);
+                              newMonth.setMonth(newMonth.getMonth() - 1);
+                              setCalendarMonth(newMonth);
+                            } else if (viewMode === 'month') {
+                              const newYear = new Date(calendarMonth);
+                              newYear.setFullYear(newYear.getFullYear() - 1);
+                              setCalendarMonth(newYear);
+                            } else {
+                              const newDecade = new Date(calendarMonth);
+                              newDecade.setFullYear(newDecade.getFullYear() - 12);
+                              setCalendarMonth(newDecade);
+                            }
+                          }}
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+
+                        <div className="flex gap-2">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            className="text-sm font-medium"
+                            onClick={() => setViewMode(viewMode === 'month' ? 'day' : 'month')}
+                          >
+                            {format(calendarMonth, 'MMMM', { locale: ptBR })}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            className="text-sm font-medium"
+                            onClick={() => setViewMode(viewMode === 'year' ? 'day' : 'year')}
+                          >
+                            {format(calendarMonth, 'yyyy')}
+                          </Button>
+                        </div>
+
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => {
+                            if (viewMode === 'day') {
+                              const newMonth = new Date(calendarMonth);
+                              newMonth.setMonth(newMonth.getMonth() + 1);
+                              setCalendarMonth(newMonth);
+                            } else if (viewMode === 'month') {
+                              const newYear = new Date(calendarMonth);
+                              newYear.setFullYear(newYear.getFullYear() + 1);
+                              setCalendarMonth(newYear);
+                            } else {
+                              const newDecade = new Date(calendarMonth);
+                              newDecade.setFullYear(newDecade.getFullYear() + 12);
+                              setCalendarMonth(newDecade);
+                            }
+                          }}
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+
+                      {/* Seletor de ano */}
+                      {viewMode === 'year' && (
+                        <div className="grid grid-cols-3 gap-2">
+                          {Array.from({ length: 12 }, (_, i) => {
+                            const year = Math.floor(calendarMonth.getFullYear() / 12) * 12 + i;
+                            return (
+                              <Button
+                                key={year}
+                                type="button"
+                                variant={calendarMonth.getFullYear() === year ? 'default' : 'ghost'}
+                                className="h-9"
+                                onClick={() => {
+                                  const newDate = new Date(calendarMonth);
+                                  newDate.setFullYear(year);
+                                  setCalendarMonth(newDate);
+                                  setViewMode('month');
+                                }}
+                                disabled={year > new Date().getFullYear()}
+                              >
+                                {year}
+                              </Button>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Seletor de mês */}
+                      {viewMode === 'month' && (
+                        <div className="grid grid-cols-3 gap-2">
+                          {Array.from({ length: 12 }, (_, i) => {
+                            const monthDate = new Date(calendarMonth.getFullYear(), i, 1);
+                            const isDisabled = monthDate > new Date();
+                            return (
+                              <Button
+                                key={i}
+                                type="button"
+                                variant={calendarMonth.getMonth() === i ? 'default' : 'ghost'}
+                                className="h-9"
+                                onClick={() => {
+                                  const newDate = new Date(calendarMonth);
+                                  newDate.setMonth(i);
+                                  setCalendarMonth(newDate);
+                                  setViewMode('day');
+                                }}
+                                disabled={isDisabled}
+                              >
+                                {format(monthDate, 'MMM', { locale: ptBR })}
+                              </Button>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Seletor de dia */}
+                      {viewMode === 'day' && (
+                        <DayPicker
+                          mode="single"
+                          selected={field.value}
+                          onSelect={(date) => {
+                            field.onChange(date);
+                            if (date) setCalendarMonth(date);
+                          }}
+                          month={calendarMonth}
+                          onMonthChange={setCalendarMonth}
+                          disabled={(date) => date > new Date()}
+                          locale={ptBR}
+                          className="pointer-events-auto"
+                          classNames={{
+                            months: "flex flex-col space-y-4",
+                            month: "space-y-4",
+                            caption: "hidden",
+                            table: "w-full border-collapse space-y-1",
+                            head_row: "flex",
+                            head_cell: "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
+                            row: "flex w-full mt-2",
+                            cell: "h-9 w-9 text-center text-sm p-0 relative",
+                            day: "h-9 w-9 p-0 font-normal hover:bg-accent hover:text-accent-foreground rounded-md",
+                            day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+                            day_today: "bg-accent text-accent-foreground",
+                            day_outside: "text-muted-foreground opacity-50",
+                            day_disabled: "text-muted-foreground opacity-50",
+                          }}
+                        />
+                      )}
+                    </div>
                   </PopoverContent>
                 </Popover>
                 <FormMessage />
