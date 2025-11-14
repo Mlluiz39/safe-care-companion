@@ -1,22 +1,39 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { CalendarIcon, Plus, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { useState } from "react";
-import { DayPicker } from "react-day-picker";
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { CalendarIcon, Plus, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
+import { useState } from 'react'
+import { DayPicker } from 'react-day-picker'
 
 const formSchema = z.object({
-  full_name: z.string().min(1, "Nome é obrigatório"),
+  full_name: z.string().min(1, 'Nome é obrigatório'),
   date_of_birth: z.date().optional(),
   blood_type: z.string().optional(),
   allergies: z.array(z.string()).default([]),
@@ -24,65 +41,95 @@ const formSchema = z.object({
   emergency_contact: z.string().optional(),
   emergency_phone: z.string().optional(),
   notes: z.string().optional(),
-});
+})
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof formSchema>
 
-interface FamilyMemberFormProps {
-  onSubmit: (values: FormValues) => void;
-  defaultValues?: Partial<FormValues>;
-  isLoading?: boolean;
+type SubmitPayload = Omit<FormValues, 'date_of_birth'> & {
+  date_of_birth?: string | null
 }
 
-export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyMemberFormProps) => {
-  const [newAllergy, setNewAllergy] = useState("");
-  const [newCondition, setNewCondition] = useState("");
-  const [calendarMonth, setCalendarMonth] = useState<Date>(defaultValues?.date_of_birth || new Date());
-  const [viewMode, setViewMode] = useState<'day' | 'month' | 'year'>('day');
-  
+interface FamilyMemberFormProps {
+  onSubmit: (values: SubmitPayload) => void
+  defaultValues?: Partial<FormValues>
+  isLoading?: boolean
+}
+
+export const FamilyMemberForm = ({
+  onSubmit,
+  defaultValues,
+  isLoading,
+}: FamilyMemberFormProps) => {
+  const [newAllergy, setNewAllergy] = useState('')
+  const [newCondition, setNewCondition] = useState('')
+  const [calendarMonth, setCalendarMonth] = useState<Date>(
+    defaultValues?.date_of_birth || new Date()
+  )
+  const [viewMode, setViewMode] = useState<'day' | 'month' | 'year'>('day')
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      full_name: defaultValues?.full_name || "",
+      full_name: defaultValues?.full_name || '',
       date_of_birth: defaultValues?.date_of_birth,
-      blood_type: defaultValues?.blood_type || "",
+      blood_type: defaultValues?.blood_type || '',
       allergies: defaultValues?.allergies || [],
       chronic_conditions: defaultValues?.chronic_conditions || [],
-      emergency_contact: defaultValues?.emergency_contact || "",
-      emergency_phone: defaultValues?.emergency_phone || "",
-      notes: defaultValues?.notes || "",
+      emergency_contact: defaultValues?.emergency_contact || '',
+      emergency_phone: defaultValues?.emergency_phone || '',
+      notes: defaultValues?.notes || '',
     },
-  });
+  })
 
   const addAllergy = () => {
     if (newAllergy.trim()) {
-      const current = form.getValues("allergies");
-      form.setValue("allergies", [...current, newAllergy.trim()]);
-      setNewAllergy("");
+      const current = form.getValues('allergies')
+      form.setValue('allergies', [...current, newAllergy.trim()])
+      setNewAllergy('')
     }
-  };
+  }
 
   const removeAllergy = (index: number) => {
-    const current = form.getValues("allergies");
-    form.setValue("allergies", current.filter((_, i) => i !== index));
-  };
+    const current = form.getValues('allergies')
+    form.setValue(
+      'allergies',
+      current.filter((_, i) => i !== index)
+    )
+  }
 
   const addCondition = () => {
     if (newCondition.trim()) {
-      const current = form.getValues("chronic_conditions");
-      form.setValue("chronic_conditions", [...current, newCondition.trim()]);
-      setNewCondition("");
+      const current = form.getValues('chronic_conditions')
+      form.setValue('chronic_conditions', [...current, newCondition.trim()])
+      setNewCondition('')
     }
-  };
+  }
 
   const removeCondition = (index: number) => {
-    const current = form.getValues("chronic_conditions");
-    form.setValue("chronic_conditions", current.filter((_, i) => i !== index));
-  };
+    const current = form.getValues('chronic_conditions')
+    form.setValue(
+      'chronic_conditions',
+      current.filter((_, i) => i !== index)
+    )
+  }
+
+  const handleSubmitFixed = (values: FormValues) => {
+    const fixedPayload: SubmitPayload = {
+      ...values,
+      date_of_birth: values.date_of_birth
+        ? format(values.date_of_birth, 'yyyy-MM-dd')
+        : null,
+    }
+
+    onSubmit(fixedPayload)
+  }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit(handleSubmitFixed)}
+        className="space-y-6"
+      >
         <FormField
           control={form.control}
           name="full_name"
@@ -110,12 +157,12 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
                       <Button
                         variant="outline"
                         className={cn(
-                          "pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
+                          'pl-3 text-left font-normal',
+                          !field.value && 'text-muted-foreground'
                         )}
                       >
                         {field.value ? (
-                          format(field.value, "dd/MM/yyyy")
+                          format(field.value, 'dd/MM/yyyy')
                         ) : (
                           <span>Selecione a data</span>
                         )}
@@ -134,17 +181,19 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
                           className="h-7 w-7"
                           onClick={() => {
                             if (viewMode === 'day') {
-                              const newMonth = new Date(calendarMonth);
-                              newMonth.setMonth(newMonth.getMonth() - 1);
-                              setCalendarMonth(newMonth);
+                              const newMonth = new Date(calendarMonth)
+                              newMonth.setMonth(newMonth.getMonth() - 1)
+                              setCalendarMonth(newMonth)
                             } else if (viewMode === 'month') {
-                              const newYear = new Date(calendarMonth);
-                              newYear.setFullYear(newYear.getFullYear() - 1);
-                              setCalendarMonth(newYear);
+                              const newYear = new Date(calendarMonth)
+                              newYear.setFullYear(newYear.getFullYear() - 1)
+                              setCalendarMonth(newYear)
                             } else {
-                              const newDecade = new Date(calendarMonth);
-                              newDecade.setFullYear(newDecade.getFullYear() - 12);
-                              setCalendarMonth(newDecade);
+                              const newDecade = new Date(calendarMonth)
+                              newDecade.setFullYear(
+                                newDecade.getFullYear() - 12
+                              )
+                              setCalendarMonth(newDecade)
                             }
                           }}
                         >
@@ -156,7 +205,11 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
                             type="button"
                             variant="ghost"
                             className="text-sm font-medium"
-                            onClick={() => setViewMode(viewMode === 'month' ? 'day' : 'month')}
+                            onClick={() =>
+                              setViewMode(
+                                viewMode === 'month' ? 'day' : 'month'
+                              )
+                            }
                           >
                             {format(calendarMonth, 'MMMM', { locale: ptBR })}
                           </Button>
@@ -164,7 +217,9 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
                             type="button"
                             variant="ghost"
                             className="text-sm font-medium"
-                            onClick={() => setViewMode(viewMode === 'year' ? 'day' : 'year')}
+                            onClick={() =>
+                              setViewMode(viewMode === 'year' ? 'day' : 'year')
+                            }
                           >
                             {format(calendarMonth, 'yyyy')}
                           </Button>
@@ -177,17 +232,19 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
                           className="h-7 w-7"
                           onClick={() => {
                             if (viewMode === 'day') {
-                              const newMonth = new Date(calendarMonth);
-                              newMonth.setMonth(newMonth.getMonth() + 1);
-                              setCalendarMonth(newMonth);
+                              const newMonth = new Date(calendarMonth)
+                              newMonth.setMonth(newMonth.getMonth() + 1)
+                              setCalendarMonth(newMonth)
                             } else if (viewMode === 'month') {
-                              const newYear = new Date(calendarMonth);
-                              newYear.setFullYear(newYear.getFullYear() + 1);
-                              setCalendarMonth(newYear);
+                              const newYear = new Date(calendarMonth)
+                              newYear.setFullYear(newYear.getFullYear() + 1)
+                              setCalendarMonth(newYear)
                             } else {
-                              const newDecade = new Date(calendarMonth);
-                              newDecade.setFullYear(newDecade.getFullYear() + 12);
-                              setCalendarMonth(newDecade);
+                              const newDecade = new Date(calendarMonth)
+                              newDecade.setFullYear(
+                                newDecade.getFullYear() + 12
+                              )
+                              setCalendarMonth(newDecade)
                             }
                           }}
                         >
@@ -199,24 +256,31 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
                       {viewMode === 'year' && (
                         <div className="grid grid-cols-3 gap-2">
                           {Array.from({ length: 12 }, (_, i) => {
-                            const year = Math.floor(calendarMonth.getFullYear() / 12) * 12 + i;
+                            const year =
+                              Math.floor(calendarMonth.getFullYear() / 12) *
+                                12 +
+                              i
                             return (
                               <Button
                                 key={year}
                                 type="button"
-                                variant={calendarMonth.getFullYear() === year ? 'default' : 'ghost'}
+                                variant={
+                                  calendarMonth.getFullYear() === year
+                                    ? 'default'
+                                    : 'ghost'
+                                }
                                 className="h-9"
                                 onClick={() => {
-                                  const newDate = new Date(calendarMonth);
-                                  newDate.setFullYear(year);
-                                  setCalendarMonth(newDate);
-                                  setViewMode('month');
+                                  const newDate = new Date(calendarMonth)
+                                  newDate.setFullYear(year)
+                                  setCalendarMonth(newDate)
+                                  setViewMode('month')
                                 }}
                                 disabled={year > new Date().getFullYear()}
                               >
                                 {year}
                               </Button>
-                            );
+                            )
                           })}
                         </div>
                       )}
@@ -225,25 +289,33 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
                       {viewMode === 'month' && (
                         <div className="grid grid-cols-3 gap-2">
                           {Array.from({ length: 12 }, (_, i) => {
-                            const monthDate = new Date(calendarMonth.getFullYear(), i, 1);
-                            const isDisabled = monthDate > new Date();
+                            const monthDate = new Date(
+                              calendarMonth.getFullYear(),
+                              i,
+                              1
+                            )
+                            const isDisabled = monthDate > new Date()
                             return (
                               <Button
                                 key={i}
                                 type="button"
-                                variant={calendarMonth.getMonth() === i ? 'default' : 'ghost'}
+                                variant={
+                                  calendarMonth.getMonth() === i
+                                    ? 'default'
+                                    : 'ghost'
+                                }
                                 className="h-9"
                                 onClick={() => {
-                                  const newDate = new Date(calendarMonth);
-                                  newDate.setMonth(i);
-                                  setCalendarMonth(newDate);
-                                  setViewMode('day');
+                                  const newDate = new Date(calendarMonth)
+                                  newDate.setMonth(i)
+                                  setCalendarMonth(newDate)
+                                  setViewMode('day')
                                 }}
                                 disabled={isDisabled}
                               >
                                 {format(monthDate, 'MMM', { locale: ptBR })}
                               </Button>
-                            );
+                            )
                           })}
                         </div>
                       )}
@@ -253,29 +325,31 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
                         <DayPicker
                           mode="single"
                           selected={field.value}
-                          onSelect={(date) => {
-                            field.onChange(date);
-                            if (date) setCalendarMonth(date);
+                          onSelect={date => {
+                            field.onChange(date)
+                            if (date) setCalendarMonth(date)
                           }}
                           month={calendarMonth}
                           onMonthChange={setCalendarMonth}
-                          disabled={(date) => date > new Date()}
+                          disabled={date => date > new Date()}
                           locale={ptBR}
                           className="pointer-events-auto"
                           classNames={{
-                            months: "flex flex-col space-y-4",
-                            month: "space-y-4",
-                            caption: "hidden",
-                            table: "w-full border-collapse space-y-1",
-                            head_row: "flex",
-                            head_cell: "text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]",
-                            row: "flex w-full mt-2",
-                            cell: "h-9 w-9 text-center text-sm p-0 relative",
-                            day: "h-9 w-9 p-0 font-normal hover:bg-accent hover:text-accent-foreground rounded-md",
-                            day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-                            day_today: "bg-accent text-accent-foreground",
-                            day_outside: "text-muted-foreground opacity-50",
-                            day_disabled: "text-muted-foreground opacity-50",
+                            months: 'flex flex-col space-y-4',
+                            month: 'space-y-4',
+                            caption: 'hidden',
+                            table: 'w-full border-collapse space-y-1',
+                            head_row: 'flex',
+                            head_cell:
+                              'text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]',
+                            row: 'flex w-full mt-2',
+                            cell: 'h-9 w-9 text-center text-sm p-0 relative',
+                            day: 'h-9 w-9 p-0 font-normal hover:bg-accent hover:text-accent-foreground rounded-md',
+                            day_selected:
+                              'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground',
+                            day_today: 'bg-accent text-accent-foreground',
+                            day_outside: 'text-muted-foreground opacity-50',
+                            day_disabled: 'text-muted-foreground opacity-50',
                           }}
                         />
                       )}
@@ -293,7 +367,10 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Tipo Sanguíneo</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione" />
@@ -325,8 +402,10 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
               <div className="flex gap-2">
                 <Input
                   value={newAllergy}
-                  onChange={(e) => setNewAllergy(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addAllergy())}
+                  onChange={e => setNewAllergy(e.target.value)}
+                  onKeyPress={e =>
+                    e.key === 'Enter' && (e.preventDefault(), addAllergy())
+                  }
                   placeholder="Ex: Dipirona"
                   className="flex-1"
                 />
@@ -336,7 +415,11 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
                 {field.value.map((allergy, index) => (
-                  <Badge key={index} variant="destructive" className="pl-2 pr-1">
+                  <Badge
+                    key={index}
+                    variant="destructive"
+                    className="pl-2 pr-1"
+                  >
                     {allergy}
                     <button
                       type="button"
@@ -362,12 +445,18 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
               <div className="flex gap-2">
                 <Input
                   value={newCondition}
-                  onChange={(e) => setNewCondition(e.target.value)}
-                  onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addCondition())}
+                  onChange={e => setNewCondition(e.target.value)}
+                  onKeyPress={e =>
+                    e.key === 'Enter' && (e.preventDefault(), addCondition())
+                  }
                   placeholder="Ex: Diabetes tipo 2"
                   className="flex-1"
                 />
-                <Button type="button" onClick={addCondition} variant="secondary">
+                <Button
+                  type="button"
+                  onClick={addCondition}
+                  variant="secondary"
+                >
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>
@@ -427,7 +516,7 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
             <FormItem>
               <FormLabel>Observações</FormLabel>
               <FormControl>
-                <Textarea 
+                <Textarea
                   placeholder="Informações adicionais sobre o idoso..."
                   className="resize-none"
                   rows={3}
@@ -440,9 +529,9 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
         />
 
         <Button type="submit" disabled={isLoading} className="w-full">
-          {isLoading ? "Salvando..." : "Salvar Perfil"}
+          {isLoading ? 'Salvando...' : 'Salvar Perfil'}
         </Button>
       </form>
     </Form>
-  );
-};
+  )
+}
