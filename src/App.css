@@ -3,6 +3,7 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  --gradient-wellness: linear-gradient(135deg, #4f46e5 0%, #16a34a 100%);
 }
 
 .logo {
