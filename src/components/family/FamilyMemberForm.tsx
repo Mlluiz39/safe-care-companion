@@ -128,6 +128,9 @@ export const FamilyMemberForm = ({ onSubmit, defaultValues, isLoading }: FamilyM
                       disabled={(date) => date > new Date()}
                       initialFocus
                       className="pointer-events-auto"
+                      captionLayout="dropdown-buttons"
+                      fromYear={1900}
+                      toYear={new Date().getFullYear()}
                     />
                   </PopoverContent>
                 </Popover>
