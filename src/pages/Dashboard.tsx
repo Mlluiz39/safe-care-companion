@@ -19,6 +19,12 @@ import type { User } from '@supabase/supabase-js'
 const Dashboard = () => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState({
+    medications: 0,
+    appointments: 0,
+    documents: 0,
+    familyMembers: 0,
+  })
   const navigate = useNavigate()
   const { toast } = useToast()
 
@@ -35,6 +41,7 @@ const Dashboard = () => {
       }
 
       setUser(session.user)
+      await loadStats()
       setLoading(false)
     }
 
@@ -48,11 +55,47 @@ const Dashboard = () => {
         navigate('/auth')
       } else {
         setUser(session.user)
+        loadStats()
       }
     })
 
     return () => subscription.unsubscribe()
   }, [navigate])
+
+  const loadStats = async () => {
+    try {
+      // Count active medications
+      const { count: medicationsCount } = await supabase
+        .from('medications')
+        .select('*', { count: 'exact', head: true })
+        .eq('active', true)
+
+      // Count upcoming appointments
+      const { count: appointmentsCount } = await supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .gte('appointment_date', new Date().toISOString())
+
+      // Count medical documents
+      const { count: documentsCount } = await supabase
+        .from('medical_documents')
+        .select('*', { count: 'exact', head: true })
+
+      // Count family members
+      const { count: familyMembersCount } = await supabase
+        .from('family_members')
+        .select('*', { count: 'exact', head: true })
+
+      setStats({
+        medications: medicationsCount || 0,
+        appointments: appointmentsCount || 0,
+        documents: documentsCount || 0,
+        familyMembers: familyMembersCount || 0,
+      })
+    } catch (error) {
+      console.error('Error loading stats:', error)
+    }
+  }
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -111,7 +154,7 @@ const Dashboard = () => {
           <Card className="p-6 bg-[var(--gradient-card)] hover:shadow-[var(--shadow-medium)] transition-all">
             <div className="flex items-center justify-between mb-2">
               <Pill className="w-8 h-8 text-primary" />
-              <span className="text-2xl font-bold">0</span>
+              <span className="text-2xl font-bold">{stats.medications}</span>
             </div>
             <p className="text-sm text-muted-foreground">Medicamentos Ativos</p>
           </Card>
@@ -119,7 +162,7 @@ const Dashboard = () => {
           <Card className="p-6 bg-[var(--gradient-card)] hover:shadow-[var(--shadow-medium)] transition-all">
             <div className="flex items-center justify-between mb-2">
               <Calendar className="w-8 h-8 text-secondary" />
-              <span className="text-2xl font-bold">0</span>
+              <span className="text-2xl font-bold">{stats.appointments}</span>
             </div>
             <p className="text-sm text-muted-foreground">Próximas Consultas</p>
           </Card>
@@ -127,7 +170,7 @@ const Dashboard = () => {
           <Card className="p-6 bg-[var(--gradient-card)] hover:shadow-[var(--shadow-medium)] transition-all">
             <div className="flex items-center justify-between mb-2">
               <FileText className="w-8 h-8 text-accent" />
-              <span className="text-2xl font-bold">0</span>
+              <span className="text-2xl font-bold">{stats.documents}</span>
             </div>
             <p className="text-sm text-muted-foreground">Exames Salvos</p>
           </Card>
@@ -135,7 +178,7 @@ const Dashboard = () => {
           <Card className="p-6 bg-[var(--gradient-card)] hover:shadow-[var(--shadow-medium)] transition-all">
             <div className="flex items-center justify-between mb-2">
               <Users className="w-8 h-8 text-primary" />
-              <span className="text-2xl font-bold">0</span>
+              <span className="text-2xl font-bold">{stats.familyMembers}</span>
             </div>
             <p className="text-sm text-muted-foreground">Membros da Família</p>
           </Card>
