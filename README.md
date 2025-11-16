@@ -147,7 +147,7 @@ vercel --prod
 
 ## 🏗️ Estrutura do Projeto
 
-text
+bash
 
 health-care-app/
 ├── public/              # Arquivos estáticos
