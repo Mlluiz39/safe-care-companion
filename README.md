@@ -147,7 +147,8 @@ vercel --prod
 
 ## 🏗️ Estrutura do Projeto
 
-```
+text
+
 health-care-app/
 ├── public/              # Arquivos estáticos
 ├── src/
@@ -167,7 +168,6 @@ health-care-app/
 │   └── styles/          # CSS
 ├── database/            # SQL Scripts
 └── ...
-```
 
 ---
 
