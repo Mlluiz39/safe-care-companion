@@ -58,7 +58,7 @@ O app estará rodando em `http://localhost:5173`
 
 ### 1. Criar Projeto no Supabase
 
-1. Acesse https://supabase.com
+1. Acesse <https://supabase.com>
 2. Crie um novo projeto
 3. Anote a **Project URL** e **anon public key**
 
@@ -104,16 +104,16 @@ npm run preview
 
 ### Deploy na Vercel
 
-#### Via Interface Web:
+#### Via Interface Web
 
-1. Acesse https://vercel.com/new
+1. Acesse <https://vercel.com/new>
 2. Importe o repositório do GitHub
 3. Configure as variáveis de ambiente:
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
 4. Clique em **Deploy**
 
-#### Via CLI:
+#### Via CLI
 
 ```bash
 # Instalar Vercel CLI
@@ -130,13 +130,13 @@ vercel --prod
 
 ## 📱 Instalar como PWA
 
-### Android (Chrome/Edge):
+### Android (Chrome/Edge)
 
 1. Abra o site no navegador
 2. Menu (3 pontos) → **Adicionar à tela inicial**
 3. Confirme a instalação
 
-### iOS (Safari):
+### iOS (Safari)
 
 1. Abra o site no Safari
 2. Botão **Compartilhar** (⬆️)
@@ -202,7 +202,7 @@ health-care-app/
 
 ## 📖 Guia de Uso
 
-### Para Administradores da Família:
+### Para Administradores da Família
 
 1. **Cadastrar Idoso**
 
@@ -224,7 +224,7 @@ health-care-app/
    - Família → Convidar Membro
    - Configure permissões (visualizar, editar, deletar)
 
-### Para Membros da Família:
+### Para Membros da Família
 
 1. **Confirmar Medicamentos**
 
@@ -345,17 +345,9 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ---
 
-## 📞 Suporte
-
-- 📧 Email: suporte@seudominio.com
-- 💬 Discord: [Link do servidor]
-- 📖 Documentação: [Link da wiki]
-
----
-
 ## ❤️ Agradecimentos
 
-- Família que inspirou este projeto
+- Minha família que inspirou este projeto
 - Comunidade open source
 - Supabase, Vercel e React teams
 
