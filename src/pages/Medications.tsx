@@ -226,7 +226,7 @@ const Medications = () => {
             setIsFormOpen(true);
           }}>
             <Plus className="w-4 h-4 mr-2" />
-            Adicionar Medicamento
+            Adicionar
           </Button>
         </div>
       </header>
