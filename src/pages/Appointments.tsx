@@ -230,29 +230,29 @@ const Appointments = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")}>
-              <ArrowLeft className="w-5 h-5" />
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")} className="shrink-0">
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
             </Button>
-            <div className="flex items-center gap-2">
-              <CalendarIcon className="w-8 h-8 text-secondary" />
-              <h1 className="text-lg font-bold">Consultas Médicas</h1>
+            <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+              <CalendarIcon className="w-5 h-5 sm:w-8 sm:h-8 text-secondary shrink-0" />
+              <h1 className="text-sm sm:text-lg font-bold truncate">Consultas Médicas</h1>
             </div>
           </div>
           <Button onClick={() => {
             setEditingAppointment(null);
             setSelectedDate(null);
             setIsFormOpen(true);
-          }}>
-            <Plus className="w-2 h-2 mr-2" />
-            Nova Consulta
+          }} size="sm" className="shrink-0">
+            <Plus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Nova</span>
           </Button>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         <AppointmentCalendar
           appointments={appointments}
           onDateClick={handleDateClick}

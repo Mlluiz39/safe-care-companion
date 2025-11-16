@@ -1,7 +1,7 @@
 // WellnessBanner.tsx
 export function WellnessBanner() {
   return (
-    <div className="relative rounded-2xl overflow-hidden p-8 mb-8 shadow-xl">
+    <div className="relative rounded-xl sm:rounded-2xl overflow-hidden p-4 sm:p-8 mb-4 sm:mb-8 shadow-xl">
       {/* Gradiente */}
       <div className="absolute inset-0 bg-[var(--gradient-wellness)]"></div>
 
@@ -10,10 +10,10 @@ export function WellnessBanner() {
 
       {/* Conteúdo */}
       <div className="relative z-10">
-        <h2 className="text-3xl font-bold mb-2 text-white">
+        <h2 className="text-xl sm:text-3xl font-bold mb-1 sm:mb-2 text-white">
           Bem-vindo de volta!
         </h2>
-        <p className="text-white/90">
+        <p className="text-sm sm:text-base text-white/90">
           Gerencie a saúde da sua família de forma simples e organizada
         </p>
       </div>
