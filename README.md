@@ -353,4 +353,4 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ---
 
-**Desenvolvido com ❤️ para facilitar o cuidado com nossos idosos**
+### Desenvolvido com ❤️ para facilitar o cuidado com nossos idosos
